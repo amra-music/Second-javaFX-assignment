@@ -14,6 +14,8 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
 
@@ -24,6 +26,7 @@ public class KorisnikController {
     public TextField fldUsername;
     public ListView<Korisnik> listKorisnici;
     public PasswordField fldPassword;
+    public static boolean engleskiIzabran = true;
 
     private KorisniciModel model;
 
@@ -154,5 +157,24 @@ public class KorisnikController {
         fileChooser.getExtensionFilters().add(filter);
         File file = fileChooser.showOpenDialog(stage);
         model.zapisiDatoteku(file);
+    }
+
+    public void bosanskiAction(ActionEvent actionEvent) throws IOException {
+        engleskiIzabran = false;
+        Scene scene = fldIme.getScene();
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("Translation",new Locale("bs", "BA"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/korisnici.fxml"),resourceBundle);
+        loader.setController(this);
+        scene.setRoot(loader.load());
+    }
+
+
+    public void englishAction(ActionEvent actionEvent) throws IOException {
+        engleskiIzabran = true;
+        Scene scene = fldIme.getScene();
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("Translation",new Locale("en", "US"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/korisnici.fxml"),resourceBundle);
+        loader.setController(this);
+        scene.setRoot(loader.load());
     }
 }

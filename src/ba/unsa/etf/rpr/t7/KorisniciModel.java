@@ -5,6 +5,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class KorisniciModel {
     private ObservableList<Korisnik> korisnici = FXCollections.observableArrayList();
@@ -63,6 +71,17 @@ public class KorisniciModel {
     }
 
     public void zapisiDatoteku(File file) {
-
+        if (file==null)
+            return;
+        List<String> lines = new ArrayList<>();
+        for (Korisnik korisnik : korisnici) {
+            String line = korisnik.getUsername() + ":" + korisnik.getPassword() + ":" + korisnik.getId() + ":" + korisnik.getId() + ":" + korisnik.getIme() + " " + korisnik.getPrezime() + "::";
+            lines.add(line);
+        }
+        try {
+            Files.write(Paths.get(file.getAbsolutePath()), lines, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

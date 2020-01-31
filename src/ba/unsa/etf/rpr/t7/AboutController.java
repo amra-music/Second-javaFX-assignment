@@ -5,6 +5,9 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 
 public class AboutController {
     public Label aboutLbl;
@@ -13,6 +16,9 @@ public class AboutController {
     @FXML
     public void initialize() {
         imageView.setImage(new Image("/img/info.png"));
-        aboutLbl.setText("About\n\nVerzija: 1.0\nWeb stranica:etf.unsa.ba\nGithub:https://github.com/amusic5\nAutor:Amra Music");
+        String tekst = ResourceBundle.getBundle("Translation", new Locale("bs", "BA")).getString("aboutText");
+        if (KorisnikController.engleskiIzabran)
+            tekst = ResourceBundle.getBundle("Translation", new Locale("en", "US")).getString("aboutText");
+        aboutLbl.setText(tekst);
     }
 }
