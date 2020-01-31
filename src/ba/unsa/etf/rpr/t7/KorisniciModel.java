@@ -7,15 +7,14 @@ import javafx.collections.ObservableList;
 public class KorisniciModel {
     private ObservableList<Korisnik> korisnici = FXCollections.observableArrayList();
     private SimpleObjectProperty<Korisnik> trenutniKorisnik = new SimpleObjectProperty<>();
+    private KorisnikDAO baza;
 
     public KorisniciModel() {
+    baza = KorisnikDAO.getInstance();
     }
 
     public void napuni() {
-        korisnici.add(new Korisnik("Vedran", "Ljubović", "vljubovic@etf.unsa.ba", "vedranlj", "test"));
-        korisnici.add(new Korisnik("Amra", "Delić", "adelic@etf.unsa.ba", "amrad", "test"));
-        korisnici.add(new Korisnik("Tarik", "Sijerčić", "tsijercic1@etf.unsa.ba", "tariks", "test"));
-        korisnici.add(new Korisnik("Rijad", "Fejzić", "rfejzic1@etf.unsa.ba", "rijadf", "test"));
+        korisnici = FXCollections.observableArrayList(baza.korisnici());
         trenutniKorisnik.set(null);
     }
 
