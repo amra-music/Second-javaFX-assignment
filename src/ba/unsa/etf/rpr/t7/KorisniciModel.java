@@ -4,13 +4,19 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.io.File;
+
 public class KorisniciModel {
     private ObservableList<Korisnik> korisnici = FXCollections.observableArrayList();
     private SimpleObjectProperty<Korisnik> trenutniKorisnik = new SimpleObjectProperty<>();
     private KorisnikDAO baza;
 
     public KorisniciModel() {
-    baza = KorisnikDAO.getInstance();
+        baza = KorisnikDAO.getInstance();
+    }
+
+    public void obrisiKorisnika(int id){
+        baza.obrisiKorisnika(id);
     }
 
     public void napuni() {
@@ -35,10 +41,28 @@ public class KorisniciModel {
     }
 
     public void setTrenutniKorisnik(Korisnik trenutniKorisnik) {
+        if(this.trenutniKorisnik.get()!=null && this.trenutniKorisnik.get().getId()==-1) dodajKorisnika(this.trenutniKorisnik.get());
+        else if(this.trenutniKorisnik.get()!=null ) azurirajKorisnika(this.trenutniKorisnik.get());
         this.trenutniKorisnik.set(trenutniKorisnik);
     }
 
     public void setTrenutniKorisnik(int i) {
         this.trenutniKorisnik.set(korisnici.get(i));
+    }
+
+    public void diskonektuj() {
+        KorisnikDAO.removeInstance();
+    }
+
+    public void dodajKorisnika(Korisnik oldKorisnik) {
+        baza.dodajKorisnika(oldKorisnik);
+    }
+
+    public void azurirajKorisnika(Korisnik oldKorisnik) {
+        baza.azurirajKorisnika(oldKorisnik);
+    }
+
+    public void zapisiDatoteku(File file) {
+
     }
 }

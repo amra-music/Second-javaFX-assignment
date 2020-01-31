@@ -2,9 +2,20 @@ package ba.unsa.etf.rpr.t7;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+import java.io.File;
+import java.io.IOException;
+
+import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
 
 public class KorisnikController {
     public TextField fldIme;
@@ -24,6 +35,8 @@ public class KorisnikController {
     public void initialize() {
         listKorisnici.setItems(model.getKorisnici());
         listKorisnici.getSelectionModel().selectedItemProperty().addListener((obs, oldKorisnik, newKorisnik) -> {
+
+
             model.setTrenutniKorisnik(newKorisnik);
             listKorisnici.refresh();
          });
@@ -110,5 +123,36 @@ public class KorisnikController {
 
     public void krajAction(ActionEvent actionEvent) {
         System.exit(0);
+    }
+
+    public void obrisiAction(ActionEvent actionEvent) {
+        model.obrisiKorisnika(listKorisnici.getSelectionModel().getSelectedItem().getId());
+        model.getKorisnici().remove(listKorisnici.getSelectionModel().getSelectedIndex());
+    }
+
+    public void exitAction(ActionEvent actionEvent) {
+        System.exit(0);
+    }
+
+    public void aboutAction(ActionEvent actionEvent) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/about.fxml"));
+        Parent root = loader.load();
+        Stage primaryStage = new Stage();
+        primaryStage.setTitle("Korisnici");
+        primaryStage.setScene(new Scene(root, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE));
+        primaryStage.initModality(Modality.APPLICATION_MODAL);
+        primaryStage.setResizable(false);
+        primaryStage.show();
+    }
+
+
+    public void saveAction(ActionEvent actionEvent) throws IOException {
+        Stage stage = new Stage();
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("TXT datoteke", "*.txt");
+        fileChooser.getExtensionFilters().removeAll();
+        fileChooser.getExtensionFilters().add(filter);
+        File file = fileChooser.showOpenDialog(stage);
+        model.zapisiDatoteku(file);
     }
 }

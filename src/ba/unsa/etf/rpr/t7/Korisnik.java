@@ -1,9 +1,23 @@
 package ba.unsa.etf.rpr.t7;
 
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 public class Korisnik {
     private SimpleStringProperty ime, prezime, email, username, password;
+    private SimpleIntegerProperty id = new SimpleIntegerProperty(-1);
+
+    public int getId() {
+        return id.get();
+    }
+
+    public SimpleIntegerProperty idProperty() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id.set(id);
+    }
 
     public Korisnik(String ime, String prezime, String email, String username, String password) {
         this.ime = new SimpleStringProperty(ime);

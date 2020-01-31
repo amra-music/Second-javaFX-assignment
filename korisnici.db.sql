@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS `korisnik` (
 	`ime`	TEXT,
     `prezime`	TEXT,
     `email`	TEXT,
-    `username`	TEXT,
+    `username`	TEXT UNIQUE,
 	`password`	TEXT,
 	PRIMARY KEY(`id`)
 );
