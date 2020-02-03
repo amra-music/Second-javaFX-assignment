@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import net.sf.jasperreports.engine.JRException;
 
 import java.io.File;
 import java.io.IOException;
@@ -176,5 +177,13 @@ public class KorisnikController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/korisnici.fxml"),resourceBundle);
         loader.setController(this);
         scene.setRoot(loader.load());
+    }
+
+    public void printAction(ActionEvent actionEvent) throws IOException {
+        try {
+            new KorisniciReport().showReport(KorisnikDAO.getConn());
+        } catch (JRException greska) {
+            greska.printStackTrace();
+        }
     }
 }

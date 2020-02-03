@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class KorisnikDAO {
 
     private static KorisnikDAO instance;
-    private Connection conn;
+    private static Connection conn;
 
     private PreparedStatement korisniciUpit, obrisiKorisnikaUpit, dodajKorisnikaUpit, odrediIdKorisnikaUpit, azurirajKorisnikaUpit;
 
@@ -39,6 +39,10 @@ public class KorisnikDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static Connection getConn() {
+        return conn;
     }
 
     public static void removeInstance() {
