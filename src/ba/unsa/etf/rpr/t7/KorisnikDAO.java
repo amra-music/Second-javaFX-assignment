@@ -11,7 +11,7 @@ public class KorisnikDAO {
     private static KorisnikDAO instance;
     private static Connection conn;
 
-    private PreparedStatement korisniciUpit, obrisiKorisnikaUpit, dodajKorisnikaUpit, odrediIdKorisnikaUpit, azurirajKorisnikaUpit;
+    private PreparedStatement korisniciUpit, obrisiKorisnikaUpit, dodajKorisnikaUpit, odrediIdKorisnikaUpit, azurirajKorisnikaUpit, postaviSlikuUpit;
 
     public static KorisnikDAO getInstance() {
         if (instance == null) instance = new KorisnikDAO();
@@ -33,22 +33,23 @@ public class KorisnikDAO {
         try {
             korisniciUpit = conn.prepareStatement("SELECT * FROM korisnik");
             obrisiKorisnikaUpit = conn.prepareStatement("DELETE FROM korisnik WHERE id=?");
-            dodajKorisnikaUpit = conn.prepareStatement("INSERT INTO korisnik VALUES (?,?,?,?,?,?)");
-            azurirajKorisnikaUpit = conn.prepareStatement("UPDATE korisnik SET ime=?, prezime=?,email=?,username=?,password=? WHERE id=?");
+            dodajKorisnikaUpit = conn.prepareStatement("INSERT INTO korisnik VALUES (?,?,?,?,?,?,?)");
+            azurirajKorisnikaUpit = conn.prepareStatement("UPDATE korisnik SET ime=?, prezime=?,email=?,username=?,password=?,slika=? WHERE id=?");
             odrediIdKorisnikaUpit = conn.prepareStatement("SELECT MAX(id)+1 FROM korisnik");
+            postaviSlikuUpit = conn.prepareStatement("UPDATE korisnik SET slika=? WHERE id=?");
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public static Connection getConn() {
-        return conn;
     }
 
     public static void removeInstance() {
         if (instance == null) return;
         instance.close();
         instance = null;
+    }
+
+    public static Connection getConn() {
+        return conn;
     }
 
     public void close() {
@@ -93,8 +94,10 @@ public class KorisnikDAO {
                 String email = rs.getString(4);
                 String username = rs.getString(5);
                 String password = rs.getString(6);
+                String slika = rs.getString(7);
                 Korisnik korisnik = new Korisnik(ime,prezime,email,username,password);
                 korisnik.setId(id);
+                korisnik.setSlika(slika);
                 rezultat.add(korisnik);
             }
         } catch (SQLException e) {
@@ -124,6 +127,7 @@ public class KorisnikDAO {
             dodajKorisnikaUpit.setString(4, oldKorisnik.getEmail());
             dodajKorisnikaUpit.setString(5, oldKorisnik.getUsername());
             dodajKorisnikaUpit.setString(6, oldKorisnik.getPassword());
+            dodajKorisnikaUpit.setString(7, null);
             dodajKorisnikaUpit.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -132,15 +136,24 @@ public class KorisnikDAO {
 
     public void azurirajKorisnika(Korisnik oldKorisnik) {
         try {
-
             azurirajKorisnikaUpit.setString(1, oldKorisnik.getIme());
             azurirajKorisnikaUpit.setString(2, oldKorisnik.getPrezime());
             azurirajKorisnikaUpit.setString(3, oldKorisnik.getEmail());
             azurirajKorisnikaUpit.setString(4, oldKorisnik.getUsername());
             azurirajKorisnikaUpit.setString(5, oldKorisnik.getPassword());
-            azurirajKorisnikaUpit.setInt(6, oldKorisnik.getId());
-
+            azurirajKorisnikaUpit.setString(6, oldKorisnik.getSlika());
+            azurirajKorisnikaUpit.setInt(7, oldKorisnik.getId());
             azurirajKorisnikaUpit.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void postaviSliku(String urlSlike, int id) {
+        try {
+            postaviSlikuUpit.setString(1, urlSlike);
+            postaviSlikuUpit.setInt(2, id);
+            postaviSlikuUpit.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

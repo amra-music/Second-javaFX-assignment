@@ -6,6 +6,22 @@ import javafx.beans.property.SimpleStringProperty;
 public class Korisnik {
     private SimpleStringProperty ime, prezime, email, username, password;
     private SimpleIntegerProperty id = new SimpleIntegerProperty(-1);
+    private SimpleStringProperty slika = new SimpleStringProperty("");
+
+    public String getSlika() {
+        if (slika.get() == null || slika.get().equals(""))
+            return "https://i.imgur.com/qBajJ8J.png";
+        return slika.get();
+    }
+
+    public SimpleStringProperty slikaProperty() {
+        return slika;
+    }
+
+    public void setSlika(String slika) {
+        KorisnikDAO.getInstance().postaviSliku(slika, getId());
+        this.slika.set(slika);
+    }
 
     public int getId() {
         return id.get();

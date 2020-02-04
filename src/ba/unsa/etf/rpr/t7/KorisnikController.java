@@ -1,13 +1,17 @@
 package ba.unsa.etf.rpr.t7;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -27,6 +31,7 @@ public class KorisnikController {
     public TextField fldUsername;
     public ListView<Korisnik> listKorisnici;
     public PasswordField fldPassword;
+    public Button imgKorisnik;
     public static boolean engleskiIzabran = true;
 
     private KorisniciModel model;
@@ -35,15 +40,22 @@ public class KorisnikController {
         this.model = model;
     }
 
+    private void postaviSliku(String url) {
+        final ImageView imageView = new ImageView(new Image(url));
+        imageView.setFitWidth(128);
+        imageView.setFitHeight(128);
+        Platform.runLater(() -> imgKorisnik.setGraphic(imageView));
+    }
+
     @FXML
     public void initialize() {
         listKorisnici.setItems(model.getKorisnici());
         listKorisnici.getSelectionModel().selectedItemProperty().addListener((obs, oldKorisnik, newKorisnik) -> {
-
-
+            Thread thread = new Thread(() -> postaviSliku(newKorisnik.getSlika()));
+            thread.start();
             model.setTrenutniKorisnik(newKorisnik);
             listKorisnici.refresh();
-         });
+        });
 
         model.trenutniKorisnikProperty().addListener((obs, oldKorisnik, newKorisnik) -> {
             if (oldKorisnik != null) {
@@ -135,6 +147,7 @@ public class KorisnikController {
     }
 
     public void exitAction(ActionEvent actionEvent) {
+        Platform.exit();
         System.exit(0);
     }
 
@@ -185,5 +198,28 @@ public class KorisnikController {
         } catch (JRException greska) {
             greska.printStackTrace();
         }
+    }
+
+    public void slikeAction(ActionEvent actionEvent) throws IOException {
+
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("Translation", new Locale("en", "US"));
+        if (!engleskiIzabran)
+            resourceBundle = ResourceBundle.getBundle("Translation",new Locale("bs", "BA"));
+        SlikeController slikeController = new SlikeController();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/slike.fxml"), resourceBundle);
+        loader.setController(slikeController);
+        Parent root = loader.load();
+        Stage primaryStage = new Stage();
+        primaryStage.setTitle("Pretraga slike");
+        primaryStage.setScene(new Scene(root, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE));
+        primaryStage.initModality(Modality.APPLICATION_MODAL);
+        primaryStage.setOnHidden(event -> {
+            if (model.getTrenutniKorisnik() == null || slikeController.getSlika() == null)
+                return;
+            Thread thread = new Thread(() -> postaviSliku(slikeController.getSlika()));
+            thread.start();
+            model.getTrenutniKorisnik().setSlika(slikeController.getSlika());
+        });
+        primaryStage.show();
     }
 }
